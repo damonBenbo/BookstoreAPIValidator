@@ -53,3 +53,27 @@ describe("POST /books", () => {
     });
 });
 
+describe("GET /books", () => {
+    test("Gets a list of 1 book", async () => {
+        const response = await request(app).get(`/books`);
+        const books = response.body.books;
+        expect(books).toHaveLength(1);
+        expect(books[0]).toHaveProperty("isbn");
+        expect(books[0]).toHaveProperty("amazon_url");
+    });
+});
+
+describe("GET /books/:isbn", () => {
+    test("Gets a single book", async () => {
+        const response = await request(app)
+            .get(`/books/${book_isbn}`)
+        expect(response.body.book).toHaveProperty("isbn");
+        expect(response.body.book.isbn).toBe(book_isbn);
+    });
+
+    test("Responds with 404 if there is no book", async () => {
+        const response = await request(app).get(`/books/999`)
+        expect(response.statusCode).toBe(404);
+    });
+});
+
