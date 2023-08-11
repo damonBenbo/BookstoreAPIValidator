@@ -77,3 +77,38 @@ describe("GET /books/:isbn", () => {
     });
 });
 
+describe("PUT /books/:id", () => {
+    test("Updates a single book", async () => {
+        const response = await request(app).put(`/books/${book_isbn}`)
+            .send({
+                amazon_url: "https://booky.com",
+                author: "PoopyOt",
+                language: "English",
+                pages: 107,
+                publisher: "birdhouse",
+                title: "Untitled",
+                year: 2009
+            });
+        expect(response.body.book).toHaveProperty("isbn");
+        expect(response.body.book.title).toBe("Untitled");
+    });
+
+    test("Prevents bad book update", async () => {
+        const response = await request(app)
+            .put(`/books/${book_isbn}`)
+            .send({
+                isbn: '3447323',
+                badField: "This is not supposed to be here!!",
+                amazon_url: "https://booky.com",
+                author: "PoopyOt",
+                language: "English",
+                pages: 107,
+                publisher: "birdhouse",
+                title: "The little sea turtle",
+                year: 2009
+            });
+        expect(response.statusCode).toBe(400);
+    });
+
+
+})
