@@ -110,5 +110,27 @@ describe("PUT /books/:id", () => {
         expect(response.statusCode).toBe(400);
     });
 
+    test("404 if it can't find the book", async () => {
+        // delete book
+        await request(app)
+            .delete(`/books/${book_isbn}`)
+        const response = await request(app).delete(`/books${book_isbn}`);
+        expect(response.statusCode).toBe(404);
+    });
+});
 
-})
+describe("DELETE /books/:id", async () => {
+    test("Deletes a book", async () => {
+        const response = await request(app)
+            .delete(`/books/${book_isbn}`)
+        expect(response.body).toEqual({ message: "Book deleted" });
+    });
+});
+
+afterEach(async () => {
+    await db.query("DELETE FROM BOOKS");
+});
+
+afterAll(async () => {
+    await db.end()
+});
